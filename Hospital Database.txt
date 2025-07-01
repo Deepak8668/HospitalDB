@@ -1,0 +1,160 @@
+--  Create the Hospital Database
+CREATE DATABASE HospitalDB;
+USE HospitalDB;
+
+--  Create the Patients Table
+CREATE TABLE Patients (
+    PatientID INT AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    DateOfBirth DATE,
+    Gender ENUM('Male', 'Female', 'Other'),
+    PhoneNumber VARCHAR(15),
+    Email VARCHAR(100) UNIQUE,
+    Address TEXT,
+    RegistrationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--  Create the Doctors Table
+CREATE TABLE Doctors (
+    DoctorID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100),
+    Specialty VARCHAR(50),
+    PhoneNumber VARCHAR(15),
+    Email VARCHAR(100) UNIQUE,
+    HireDate DATE
+);
+
+--  Create the Appointments Table
+CREATE TABLE Appointments (
+    AppointmentID INT AUTO_INCREMENT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATETIME,
+    Status ENUM('Scheduled', 'Completed', 'Canceled') DEFAULT 'Scheduled',
+    Notes TEXT,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) ON DELETE CASCADE,
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID) ON DELETE CASCADE
+);
+
+-- Create the Medical Records Table
+CREATE TABLE MedicalRecords (
+    RecordID INT AUTO_INCREMENT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    Diagnosis TEXT,
+    Treatment TEXT,
+    RecordDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) ON DELETE CASCADE,
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID) ON DELETE CASCADE
+);
+
+--  Create the Billing Table
+CREATE TABLE Billing (
+    BillID INT AUTO_INCREMENT PRIMARY KEY,
+    PatientID INT,
+    AppointmentID INT,
+    Amount DECIMAL(10,2),
+    PaymentStatus ENUM('Pending', 'Paid', 'Overdue') DEFAULT 'Pending',
+    BillingDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) ON DELETE CASCADE,
+    FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID) ON DELETE CASCADE
+);
+
+-- Create the Prescriptions Table
+CREATE TABLE Prescriptions (
+    PrescriptionID INT AUTO_INCREMENT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    Medication VARCHAR(100),
+    Dosage VARCHAR(50),
+    PrescriptionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID) ON DELETE CASCADE,
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID) ON DELETE CASCADE
+);
+
+--  Insert Sample Data into Patients Table
+INSERT INTO Patients (FirstName, LastName, DateOfBirth, Gender, PhoneNumber, Email, Address)
+VALUES
+('John', 'Doe', '1990-05-14', 'Male', '123-456-7890', 'john.doe@example.com', '123 Elm St, Springfield'),
+('Jane', 'Smith', '1985-07-22', 'Female', '987-654-3210', 'jane.smith@example.com', '456 Oak St, Springfield');
+
+--  Insert Sample Data into Doctors Table
+INSERT INTO Doctors (Name, Specialty, PhoneNumber, Email, HireDate)
+VALUES
+('Dr. Emily Carter', 'Cardiology', '555-1234', 'emily.carter@example.com', '2015-06-01'),
+('Dr. Robert Brown', 'Neurology', '555-5678', 'robert.brown@example.com', '2012-08-15');
+
+--  Insert Sample Data into Appointments Table
+INSERT INTO Appointments (PatientID, DoctorID, AppointmentDate, Status, Notes)
+VALUES
+(1, 1, '2025-03-10 10:30:00', 'Scheduled', 'Routine check-up'),
+(2, 2, '2025-03-12 14:00:00', 'Scheduled', 'MRI scan follow-up');
+
+--  Insert Sample Data into Medical Records Table
+INSERT INTO MedicalRecords (PatientID, DoctorID, Diagnosis, Treatment)
+VALUES
+(1, 1, 'Hypertension', 'Prescribed medication and lifestyle changes'),
+(2, 2, 'Migraine', 'Advised MRI scan and prescribed painkillers');
+
+--  Insert Sample Data into Billing Table
+INSERT INTO Billing (PatientID, AppointmentID, Amount, PaymentStatus)
+VALUES
+(1, 1, 150.00, 'Pending'),
+(2, 2, 300.00, 'Paid');
+
+--  Insert Sample Data into Prescriptions Table
+INSERT INTO Prescriptions (PatientID, DoctorID, Medication, Dosage)
+VALUES
+(1, 1, 'Lisinopril', '10mg once daily'),
+(2, 2, 'Ibuprofen', '200mg every 6 hours as needed');
+
+--  Retrieve All Patients
+SELECT * FROM Patients;
+
+--  Retrieve All Doctors
+SELECT * FROM Doctors;
+
+--  Retrieve Upcoming Appointments with Patient & Doctor Details
+SELECT 
+    a.AppointmentID, 
+    p.FirstName AS Patient, 
+    d.Name AS Doctor, 
+    a.AppointmentDate, 
+    a.Status 
+FROM Appointments a
+JOIN Patients p ON a.PatientID = p.PatientID
+JOIN Doctors d ON a.DoctorID = d.DoctorID
+WHERE a.Status = 'Scheduled'
+ORDER BY a.AppointmentDate;
+
+--  Count Total Patients
+SELECT COUNT(*) AS TotalPatients FROM Patients;
+
+--  Find Unpaid Bills
+SELECT 
+    b.BillID, p.FirstName AS Patient, b.Amount, b.PaymentStatus, b.BillingDate
+FROM Billing b
+JOIN Patients p ON b.PatientID = p.PatientID
+WHERE b.PaymentStatus = 'Pending';
+
+--  Get All Prescriptions for a Patient
+SELECT 
+    pr.PrescriptionID, 
+    p.FirstName AS Patient, 
+    d.Name AS Doctor, 
+    pr.Medication, 
+    pr.Dosage, 
+    pr.PrescriptionDate 
+FROM Prescriptions pr
+JOIN Patients p ON pr.PatientID = p.PatientID
+JOIN Doctors d ON pr.DoctorID = d.DoctorID
+WHERE p.FirstName = 'John' AND p.LastName = 'Doe';
+
+--  Update an Appointment Status
+UPDATE Appointments
+SET Status = 'Completed'
+WHERE AppointmentID = 1;
+
+--  Delete a Patient (Removes Related Records Due to ON DELETE CASCADE)
+DELETE FROM Patients WHERE PatientID = 2;
