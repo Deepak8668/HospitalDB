@@ -1,0 +1,3 @@
+Here’s a strong Answer #1 you can paste (it’s 200+ characters and matches what you described):
+
+I want to use End User GenAI to speed up my day-to-day reporting and analytics work with Medicaid beneficiary data. I regularly pull and filter vendor files in Databricks, then build Tableau dashboards and Excel reports to track coder productivity, quality, and performance trends. GenAI can help me quickly summarize large datasets, draft clear insights for stakeholders, generate calculated field ideas, validate logic/filters, and create consistent narrative write-ups for performance charts and weekly/monthly reporting.
