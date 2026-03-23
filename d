@@ -1,3 +1,13 @@
+Hi Jeanine,
+
+C2C (Corp-to-Corp) means I would work through my existing employer/vendor instead of being paid directly on W2. Your organization would contract with my employer, and they would handle my payroll.
+
+This way, no sponsorship is required from your side.
+
+Please let me know if this is something your team can consider—I’d be happy to provide more details.
+
+
+
 SELECT 
   f1.`Chart ID`,
   f1.`OIG Sample Number`,
