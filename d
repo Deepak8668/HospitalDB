@@ -63,3 +63,24 @@ FROM dev.clinical_periop_dp.periop_primetime_or
 WHERE PRIME_TIME_MIN > 0
 ORDER BY CASE_SURGERY_DATE
 LIMIT 30;
+
+
+
+SELECT
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE,
+    SUM(PRIME_TIME_MIN) AS prime_time_minutes,
+    MAX(Staffed_Available_Minutes) AS staffed_available_minutes,
+    COUNT(*) AS row_count
+FROM dev.clinical_periop_dp.periop_primetime_or
+WHERE PRIME_TIME_MIN > 0
+GROUP BY
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE
+ORDER BY
+    CASE_SURGERY_DATE,
+    Location_Name,
+    ROOM_NAME
+LIMIT 30;
