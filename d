@@ -84,3 +84,30 @@ ORDER BY
     Location_Name,
     ROOM_NAME
 LIMIT 30;
+
+
+WITH room_day AS (
+    SELECT
+        Location_Name,
+        ROOM_NAME,
+        CASE_SURGERY_DATE,
+        SUM(COALESCE(PRIME_TIME_MIN, 0)) AS prime_time_minutes,
+        MAX(Staffed_Available_Minutes) AS staffed_available_minutes
+    FROM dev.clinical_periop_dp.periop_primetime_or
+    WHERE CASE_SURGERY_DATE = '2021-01-04'
+    GROUP BY
+        Location_Name,
+        ROOM_NAME,
+        CASE_SURGERY_DATE
+)
+
+SELECT
+    SUM(prime_time_minutes) AS total_prime_time_minutes,
+    SUM(staffed_available_minutes) AS total_staffed_available_minutes,
+    ROUND(
+        100.0 * SUM(prime_time_minutes)
+        / NULLIF(SUM(staffed_available_minutes), 0),
+        2
+    ) AS prime_time_utilization_pct
+FROM room_day
+WHERE staffed_available_minutes IS NOT NULL;
