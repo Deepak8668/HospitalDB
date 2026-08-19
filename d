@@ -147,3 +147,20 @@ SELECT
 FROM dev.clncl_periop_dp.periop_primetime_or
 WHERE ROOM_NAME = 'STLO OR 26'
 LIMIT 20;
+
+
+SELECT
+    Locaton_Name,
+    ROOM_NAME,
+    Start_Date,
+    End_Date,
+    DOW,
+    Functional_Rooms,
+    Staffed_Rooms,
+    PrimeTime_Start_Time,
+    PrimeTime_End_Time,
+    Functional_Available_Minutes,
+    Staffed_Available_Minutes
+FROM dev.clncl_periop_dp.periop_primetime_or
+WHERE ROOM_NAME = 'STLO OR 26'
+ORDER BY Start_Date, DOW;
