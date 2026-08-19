@@ -192,3 +192,10 @@ SELECT
     ) AS pt_staffed_utilization_pct
 FROM room_day
 WHERE staffed_available_minutes IS NOT NULL;
+
+
+SELECT
+    SUM(staffed_available_minutes) AS staffed_available,
+    SUM(prime_time_min) AS prime_time_min
+FROM dev.clncl_periop_dp.periop_primetime_or
+WHERE case_surgery_date BETWEEN '2023-07-30' AND '2023-08-05';
