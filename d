@@ -46,3 +46,20 @@ ORDER BY
     Location_Name,
     ROOM_NAME
 LIMIT 20;
+
+
+SELECT
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE,
+    DOW,
+    IS_PRIME_DAY,
+    IS_PRIME_TIME,
+    PRIME_TIME_MIN,
+    Staffed_Available_Minutes,
+    PrimeTime_Start_Time,
+    PrimeTime_End_Time
+FROM dev.clinical_periop_dp.periop_primetime_or
+WHERE PRIME_TIME_MIN > 0
+ORDER BY CASE_SURGERY_DATE
+LIMIT 30;
