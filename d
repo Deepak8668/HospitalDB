@@ -164,3 +164,31 @@ SELECT
 FROM dev.clncl_periop_dp.periop_primetime_or
 WHERE ROOM_NAME = 'STLO OR 26'
 ORDER BY Start_Date, DOW;
+
+
+
+WITH room_day AS (
+    SELECT
+        Locaton_Name,
+        ROOM_NAME,
+        CASE_SURGERY_DATE,
+        SUM(PRIME_TIME_MIN) AS used_prime_time_minutes,
+        MAX(Staffed_Available_Minutes) AS staffed_available_minutes
+    FROM dev.clncl_periop_dp.periop_primetime_or
+    WHERE CASE_SURGERY_DATE BETWEEN '2023-07-30' AND '2023-08-05'
+    GROUP BY
+        Locaton_Name,
+        ROOM_NAME,
+        CASE_SURGERY_DATE
+)
+
+SELECT
+    SUM(used_prime_time_minutes) AS used_prime_time_minutes,
+    SUM(staffed_available_minutes) AS available_staffed_prime_time_minutes,
+    ROUND(
+        100.0 * SUM(used_prime_time_minutes)
+        / NULLIF(SUM(staffed_available_minutes), 0),
+        2
+    ) AS pt_staffed_utilization_pct
+FROM room_day
+WHERE staffed_available_minutes IS NOT NULL;
