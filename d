@@ -111,3 +111,23 @@ SELECT
     ) AS prime_time_utilization_pct
 FROM room_day
 WHERE staffed_available_minutes IS NOT NULL;
+
+
+SELECT
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE,
+    COUNT(*) AS rows_for_room_day,
+    COUNT(DISTINCT Staffed_Available_Minutes) AS distinct_staffed_values,
+    MIN(Staffed_Available_Minutes) AS min_staffed_minutes,
+    MAX(Staffed_Available_Minutes) AS max_staffed_minutes,
+    SUM(PRIME_TIME_MIN) AS prime_time_minutes
+FROM dev.clinical_periop_dp.periop_primetime_or
+WHERE CASE_SURGERY_DATE = '2021-01-04'
+GROUP BY
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE
+HAVING COUNT(*) > 1
+ORDER BY rows_for_room_day DESC
+LIMIT 30;
