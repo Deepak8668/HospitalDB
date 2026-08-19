@@ -24,3 +24,25 @@ SELECT
     COUNT(DISTINCT PRIME_TIME_MIN) AS distinct_prime_time_values,
     COUNT(DISTINCT Staffed_Available_Minutes) AS distinct_staffed_minutes
 FROM dev.clinical_periop_dp.periop_primetime_or;
+
+
+
+SELECT
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE,
+    Staffed_Available_Minutes,
+    SUM(PRIME_TIME_MIN) AS total_prime_time_min,
+    COUNT(*) AS row_count
+FROM dev.clinical_periop_dp.periop_primetime_or
+WHERE CASE_SURGERY_DATE IS NOT NULL
+GROUP BY
+    Location_Name,
+    ROOM_NAME,
+    CASE_SURGERY_DATE,
+    Staffed_Available_Minutes
+ORDER BY
+    CASE_SURGERY_DATE,
+    Location_Name,
+    ROOM_NAME
+LIMIT 20;
