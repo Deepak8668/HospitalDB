@@ -1,0 +1,15 @@
+SELECT
+    MAX(PAY_PERIOD_START_DATE) AS Latest_Pay_Period,
+    MIN(PAY_PERIOD_START_DATE) AS Earliest_Pay_Period,
+    COUNT(*) AS Total_Records
+FROM prod.fin_tmkeep_sem.fin_disp_legacy;
+
+
+SELECT
+    PAY_PERIOD_START_DATE,
+    COUNT(*) AS Record_Count
+FROM prod.fin_tmkeep_sem.fin_disp_legacy
+WHERE PAY_PERIOD_START_DATE >= '2026-07-01'
+  AND PAY_PERIOD_START_DATE < '2026-10-01'
+GROUP BY PAY_PERIOD_START_DATE
+ORDER BY PAY_PERIOD_START_DATE DESC;
